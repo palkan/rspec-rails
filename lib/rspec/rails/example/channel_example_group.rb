@@ -41,12 +41,14 @@ if RSpec::Rails::FeatureCheck.has_action_cable_testing?
 
           # @private
           def connection_class
-            (_connection_class || described_class).tap do |klass|
-              next if klass <= ::ActionCable::Connection::Base
+            (_connection_class || described_class).then do |klass|
+              # Connection class either specified explicitly or is a described class
+              next klass if klass && klass <= ::ActionCable::Connection::Base
 
-              raise "Described class is not a connection class.\n" \
-                    "Specify the connection class in the `describe` statement " \
-                    "or set it manually using `tests MyConnectionClass`"
+              # Otherwise, fallback to the default connection class
+              tests_connection ::ActionCable.server.config.connection_class.call
+
+              _connection_class
             end
           end
         end

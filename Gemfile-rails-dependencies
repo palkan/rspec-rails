@@ -25,7 +25,7 @@ gem 'puma'
 
 case version = ENV['RAILS_VERSION'] || (File.exist?(version_file) && File.read(version_file).chomp) || ''
 when /main/
-  gem "rails", :git => "https://github.com/rails/rails.git"
+  gem "rails", :git => "https://github.com/palkan/rails.git", :branch => "refactor/action-cable-server-adapterization"
   gem 'activerecord-jdbcsqlite3-adapter', git: 'https://github.com/jruby/activerecord-jdbc-adapter', platforms: [:jruby]
   gem 'selenium-webdriver', require: false
 
