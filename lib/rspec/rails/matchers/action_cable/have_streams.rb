@@ -37,7 +37,7 @@ module RSpec
           def match(subscription)
             case subscription
             when ::ActionCable::Channel::Base
-              @actual = subscription.streams
+              @actual = streams_for(subscription)
               no_expected? ? actual.any? : actual.any? { |i| expected === i }
             else
               raise ArgumentError, "have_stream, have_stream_from and have_stream_from support expectations on subscription only"
@@ -50,6 +50,13 @@ module RSpec
 
           def no_expected?
             !defined?(@expected)
+          end
+
+          def streams_for(subscription)
+            # In Rails 8, subscription.streams returns a real subscriptions hash,
+            # not a fake array of stream names like in Rails 6-7.
+            # So, we must use #stream_names instead.
+            subscription.respond_to?(:stream_names) ? subscription.stream_names : subscription.streams
           end
         end
       end
